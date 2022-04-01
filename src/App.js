@@ -18,7 +18,7 @@ const handleChange = (e) => {
         debugger
 }
 
-console.log(search, 's')
+console.log(users, 's')
 
   return (
     <div className="App">
@@ -26,7 +26,7 @@ console.log(search, 's')
         <br/>
         {users.filter((user) => {
                 return (
-                    <div>{user.login.includes(search)}</div>
+                    <div>{user.login.values().includes(search)}</div>
                 )
            })}
     </div>
