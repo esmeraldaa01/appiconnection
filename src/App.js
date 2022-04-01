@@ -26,7 +26,7 @@ console.log(users, 's')
         <br/>
         {users.filter((user) => {
                 return (
-                    <div>{user.login.values().includes(search)}</div>
+                    <div>{Object.values(Object.keys(user.login)).includes(search)}</div>
                 )
            })}
     </div>
@@ -34,4 +34,5 @@ console.log(users, 's')
 }
 
 export default App;
+
 
