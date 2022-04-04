@@ -11,11 +11,18 @@ const Username = styled.p`
   font-weight: 400;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 20px;
+  margin-left: 80px;
 `;
 
 const Description = styled.p`
   color: white;
   font-size: 15px;
+  display: flex;
+`;
+const Empty = styled.p`
+  color: white;
+  font-size: 15px;
+  margin-top: 80px;
 `;
 const Background = styled.div`
   width: 100vw;
@@ -27,10 +34,32 @@ const Background = styled.div`
   background-color: midnightblue;
 `;
 
+const Stat = styled.span`
+  color: white;
+  font-size: 13px;
+  &:nth-child(1) {
+    margin-left: 75px;
+  };
+  &:nth-child(2) {
+    padding-left: 45px;
+    padding-right: 45px;
+  };
+  `
+const Tags = styled.div`
+  display: inline-flex;
+  flex-flow: row wrap;
+  margin: 15px 0px 45px 75px;
+  gap: 5px;
+  `;
+const Location = styled.div`
+  margin-left: 75px;
+  margin-top: 15px;
+  color: white;
+  `;
+
 function App() {
   const [users, setUsers] = useState([]);
-  const [search, setSearch] = useState("");
-  const [searchedUser, setSearchedUser] = useState({});
+  const [searchedUser, setSearchedUser] = useState(null);
   const [id, setId] = useState();
 
   useEffect(() => {
@@ -43,46 +72,64 @@ function App() {
     if (!id) return;
 
     axios.get(`https://api.github.com/users/${id}`).then((response) => {
+      console.log({
+        response
+      })
       setSearchedUser(response.data);
     });
   }, [id]);
 
   const handleChange = (e) => {
     if (e.key === "Enter") {
-      setSearch(e.target.value);
-      const data = users.find((user) => user.login.includes(search));
-      if (data) {
-        setId(data.id);
-      }
+      const search = e.target.value;
+
+      console.log({
+        users
+      })
+      const user = users.find((user) => user.login.includes(search));
+      if (user)
+        setId(user.id);
     }
   };
 
   return (
-    <Background>
-      <Input
-        onKeyDown={handleChange}
-        className="search"
-        style={{ width: 500 }}
-      />
-      <Card>
-        {search !== "" && searchedUser ? (
-          <Col className="description">
-            <Row>
-              <Username>{searchedUser.name}</Username>
-            </Row>
-            <Row>
-              <Description>{searchedUser.followers}</Description>
-            </Row>
-            <Row>
-              <span>{searchedUser.company}</span>
-            </Row>
-            <Tag> {searchedUser.location} </Tag>
-          </Col>
-        ) : (
-          "No users searched"
-        )}
-      </Card>
-    </Background>
+      <Background>
+        <Input
+            onKeyDown={handleChange}
+            className="search"
+            style={{ width: 500 }}
+        />
+        <Card>
+          {searchedUser ? (
+              <>
+                <Col>
+                  <Image
+                    width={100}
+                    height={100}
+                    style={{ borderRadius: 100, boxShadow: "0 0 4px 8px midnightblue", margin: "45px" }}
+                    src={searchedUser.avatar_url}
+                    alt="avatar" />
+                </Col>
+                <Col  className="description">
+                <Row>
+                  <Username>{searchedUser.name}</Username>
+                </Row>
+                <Row>
+                  <Stat>{searchedUser.followers} Followers</Stat>
+                  <Stat>{searchedUser.following} Following</Stat>
+                  <Stat>{searchedUser.public_repos} Repos</Stat>
+                </Row>
+                <Row>
+                  <span>{searchedUser.company}</span>
+                </Row>
+                <Location> {searchedUser.location} </Location>
+              </Col>
+              </>
+          ) : (
+              <Empty>No users searched</Empty>
+          )}
+        </Card>
+      </Background>
   );
 }
 
